@@ -15,18 +15,13 @@ import AuthWrapper from '@/components/AuthWrapper';
 import { useAuth } from '@/hooks/useAuth';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { Song } from '@/types';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
-  isDarkMode: true,
-  toggleTheme: () => {}
-});
-
-export const useTheme = () => useContext(ThemeContext);
 
 function MusicPlayerContent() {
   const { user } = useAuth();
@@ -51,7 +46,7 @@ function MusicPlayerContent() {
   const [currentSong, setCurrentSong] = useState<Song | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPlayerMaximized, setIsPlayerMaximized] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
   const [showCreatePlaylistModal, setShowCreatePlaylistModal] = useState(false);
   const [showAddToPlaylistModal, setShowAddToPlaylistModal] = useState(false);
   const [selectedSongForPlaylist, setSelectedSongForPlaylist] = useState<Song | null>(null);
@@ -67,9 +62,8 @@ function MusicPlayerContent() {
     }
   }, [lastPlayedSong, currentSong, hasSetLastPlayedSong, lastPlayedSongDismissed]);
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const { isDarkMode, toggleTheme } = useTheme();
+
 
   const handleSongPlay = (song: Song) => {
     setCurrentSong(song);
@@ -290,7 +284,9 @@ function MusicPlayerContent() {
 export default function MusicPlayerApp() {
   return (
     <AuthWrapper>
-      <MusicPlayerContent />
+      <ThemeProvider>
+        <MusicPlayerContent />
+      </ThemeProvider>
     </AuthWrapper>
   );
 }
