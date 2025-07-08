@@ -16,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { Song } from '@/types';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { useTheme } from '@/context/ThemeContext';
 
 interface ThemeContextType {
   isDarkMode: boolean;
