@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ChevronDown, MoreHorizontal, Heart, Share2, Play, Pause, SkipBack, SkipForward, Volume2, Repeat, Shuffle, Plus, Eye } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
+
 
 interface MaximizedPlayerProps {
   song: Song;
