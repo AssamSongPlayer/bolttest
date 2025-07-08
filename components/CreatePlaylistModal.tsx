@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Music } from 'lucide-react';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
+
 
 interface CreatePlaylistModalProps {
   isOpen: boolean;
