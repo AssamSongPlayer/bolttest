@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Heart, Play } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 import SongCard from './SongCard';
 
 interface LikedSongsPageProps {
