@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, createContext, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home as HomeIcon, Search, Settings } from 'lucide-react';
 import HomePage from '@/components/HomePage';
 import SearchPage from '@/components/SearchPage';
@@ -15,14 +15,7 @@ import AuthWrapper from '@/components/AuthWrapper';
 import { useAuth } from '@/hooks/useAuth';
 import { useSupabaseData } from '@/hooks/useSupabaseData';
 import { Song } from '@/types';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { useTheme } from '@/context/ThemeContext';
-
-interface ThemeContextType {
-  isDarkMode: boolean;
-  toggleTheme: () => void;
-}
-
+import { useTheme } from '@/context/ThemeContext'; // Use the useTheme hook
 
 function MusicPlayerContent() {
   const { user } = useAuth();
@@ -62,14 +55,13 @@ function MusicPlayerContent() {
     }
   }, [lastPlayedSong, currentSong, hasSetLastPlayedSong, lastPlayedSongDismissed]);
 
+  // Using the useTheme hook to get theme context
   const { isDarkMode, toggleTheme } = useTheme();
-
 
   const handleSongPlay = (song: Song) => {
     setCurrentSong(song);
     setIsPlaying(true);
     setLastPlayedSongDismissed(false); // Reset dismissal when user actively plays a song
-    // Record listening history and update last song
     recordListeningHistory(song.id);
   };
 
@@ -82,20 +74,15 @@ function MusicPlayerContent() {
   };
 
   const closePlayer = async () => {
-    // Stop tracking current song before closing
     await stopCurrentSongTracking();
     setCurrentSong(null);
     setIsPlaying(false);
     setIsPlayerMaximized(false);
-    
-    // Mark last played song as dismissed so it won't auto-load again
     setLastPlayedSongDismissed(true);
   };
 
   const handleToggleLike = (songId: string) => {
     toggleLike(songId);
-    
-    // Update current song state if it's the one being liked/unliked
     if (currentSong && currentSong.id === songId) {
       setCurrentSong(prev => prev ? { ...prev, isLiked: !prev.isLiked } : null);
     }
@@ -182,102 +169,99 @@ function MusicPlayerContent() {
     : 'bg-gray-50 text-gray-900';
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      <div className={`min-h-screen ${themeClasses} relative overflow-hidden`}>
-        {/* Main Content */}
-        <div className={`transition-all duration-300 ${currentSong ? 'pb-36' : 'pb-20'}`}>
-          {renderContent()}
-        </div>
-
-        {/* Bottom Navigation */}
-        {currentPage === 'main' && (
-          <div className={`fixed bottom-0 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t z-30`}>
-            <div className="flex items-center justify-around py-3">
-              <button
-                onClick={() => setActiveTab('home')}
-                className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
-                  activeTab === 'home' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}
-              >
-                <HomeIcon size={24} />
-                <span className="text-xs">Home</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('search')}
-                className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
-                  activeTab === 'search' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}
-              >
-                <Search size={24} />
-                <span className="text-xs">Search</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
-                  activeTab === 'settings' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
-                }`}
-              >
-                <Settings size={24} />
-                <span className="text-xs">Settings</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Music Player - Only show if currentSong exists */}
-        {currentSong && (
-          <>
-            {!isPlayerMaximized ? (
-              <MinimizedPlayer
-                song={currentSong}
-                isPlaying={isPlaying}
-                onTogglePlay={togglePlay}
-                onMaximize={togglePlayerSize}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onClose={closePlayer}
-                onToggleLike={() => handleToggleLike(currentSong.id)}
-                formatNumber={formatNumber}
-              />
-            ) : (
-              <MaximizedPlayer
-                song={currentSong}
-                isPlaying={isPlaying}
-                onTogglePlay={togglePlay}
-                onMinimize={togglePlayerSize}
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                onToggleLike={() => handleToggleLike(currentSong.id)}
-                formatNumber={formatNumber}
-                onAddToPlaylist={() => handleAddToPlaylist(currentSong)}
-              />
-            )}
-          </>
-        )}
-
-        {/* Modals */}
-        <CreatePlaylistModal
-          isOpen={showCreatePlaylistModal}
-          onClose={() => setShowCreatePlaylistModal(false)}
-          onCreatePlaylist={createPlaylist}
-        />
-
-        <AddToPlaylistModal
-          isOpen={showAddToPlaylistModal}
-          onClose={() => {
-            setShowAddToPlaylistModal(false);
-            setSelectedSongForPlaylist(null);
-          }}
-          song={selectedSongForPlaylist}
-          playlists={playlists}
-          onAddToPlaylist={addSongToPlaylist}
-          onCreatePlaylist={() => {
-            setShowAddToPlaylistModal(false);
-            setShowCreatePlaylistModal(true);
-          }}
-        />
+    <div className={`min-h-screen ${themeClasses} relative overflow-hidden`}>
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ${currentSong ? 'pb-36' : 'pb-20'}`}>
+        {renderContent()}
       </div>
-    </ThemeContext.Provider>
+
+      {/* Bottom Navigation */}
+      {currentPage === 'main' && (
+        <div className={`fixed bottom-0 left-0 right-0 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} border-t z-30`}>
+          <div className="flex items-center justify-around py-3">
+            <button
+              onClick={() => setActiveTab('home')}
+              className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
+                activeTab === 'home' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}
+            >
+              <HomeIcon size={24} />
+              <span className="text-xs">Home</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('search')}
+              className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
+                activeTab === 'search' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}
+            >
+              <Search size={24} />
+              <span className="text-xs">Search</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`flex flex-col items-center space-y-1 p-2 transition-colors ${
+                activeTab === 'settings' ? 'text-purple-400' : isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}
+            >
+              <Settings size={24} />
+              <span className="text-xs">Settings</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Music Player - Only show if currentSong exists */}
+      {currentSong && (
+        <>
+          {!isPlayerMaximized ? (
+            <MinimizedPlayer
+              song={currentSong}
+              isPlaying={isPlaying}
+              onTogglePlay={togglePlay}
+              onMaximize={togglePlayerSize}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onClose={closePlayer}
+              onToggleLike={() => handleToggleLike(currentSong.id)}
+              formatNumber={formatNumber}
+            />
+          ) : (
+            <MaximizedPlayer
+              song={currentSong}
+              isPlaying={isPlaying}
+              onTogglePlay={togglePlay}
+              onMinimize={togglePlayerSize}
+              onPrevious={handlePrevious}
+              onNext={handleNext}
+              onToggleLike={() => handleToggleLike(currentSong.id)}
+              formatNumber={formatNumber}
+              onAddToPlaylist={() => handleAddToPlaylist(currentSong)}
+            />
+          )}
+        </>
+      )}
+
+      {/* Modals */}
+      <CreatePlaylistModal
+        isOpen={showCreatePlaylistModal}
+        onClose={() => setShowCreatePlaylistModal(false)}
+        onCreatePlaylist={createPlaylist}
+      />
+      <AddToPlaylistModal
+        isOpen={showAddToPlaylistModal}
+        onClose={() => {
+          setShowAddToPlaylistModal(false);
+          setSelectedSongForPlaylist(null);
+        }}
+        song={selectedSongForPlaylist}
+        playlists={playlists}
+        onAddToPlaylist={addSongToPlaylist}
+        onCreatePlaylist={() => {
+          setShowAddToPlaylistModal(false);
+          setShowCreatePlaylistModal(true);
+        }}
+      />
+    </div>
   );
 }
 
