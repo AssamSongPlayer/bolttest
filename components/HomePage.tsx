@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { TrendingUp, Music, Plus } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 import SongCard from './SongCard';
 import TrendingSong from './TrendingSong';
