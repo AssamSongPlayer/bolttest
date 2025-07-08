@@ -1,7 +1,7 @@
 import React from 'react';
 import { Play, Heart, Eye, MoreHorizontal, Plus, X } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 
 interface SongCardProps {
   song: Song;
