@@ -1,7 +1,7 @@
 import React from 'react';
 import { Play, Heart, Eye } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 
 interface TrendingSongProps {
   song: Song;
