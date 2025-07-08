@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Heart, List, LogOut, ChevronRight, Moon, Sun, Bell, Download } from 'lucide-react';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/hooks/useAuth';
 
 interface SettingsPageProps {
