@@ -1,7 +1,7 @@
 import React from 'react';
 import { Play, Pause, SkipForward, SkipBack, X, Heart } from 'lucide-react';
 import { Song } from '@/types';
-import { useTheme } from '@/app/page';
+import { useTheme } from '@/context/ThemeContext';
 
 interface MinimizedPlayerProps {
   song: Song;
