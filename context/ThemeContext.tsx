@@ -8,7 +8,7 @@ import React, {
   ReactNode,
 } from 'react';
 
-// Define interface for theme context
+// Define the context type
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
@@ -20,33 +20,37 @@ const ThemeContext = createContext<ThemeContextType>({
   toggleTheme: () => {},
 });
 
-// Hook to access theme context
+// Custom hook to use the ThemeContext
 export const useTheme = () => useContext(ThemeContext);
 
-// ThemeProvider component to provide the theme state
+// Provider component to wrap your app
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
-  // Effect to handle theme persistence and system preferences
+  // Check for stored theme or system preference on initial load
   useEffect(() => {
-    // Check if we are in a browser environment
-    if (typeof window !== 'undefined') {
+    try {
       const storedTheme = localStorage.getItem('theme');
       if (storedTheme) {
         setIsDarkMode(storedTheme === 'dark');
       } else {
-        // Detect system preference if no theme is stored
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         setIsDarkMode(prefersDark);
       }
+    } catch (err) {
+      console.error('Error reading theme from localStorage:', err);
     }
-  }, []); // Run once on mount
+  }, []);
 
-  // Function to toggle theme and save to localStorage
+  // Toggle between dark and light themes
   const toggleTheme = () => {
     setIsDarkMode((prev) => {
       const newMode = !prev;
-      localStorage.setItem('theme', newMode ? 'dark' : 'light');
+      try {
+        localStorage.setItem('theme', newMode ? 'dark' : 'light');
+      } catch (err) {
+        console.error('Error saving theme to localStorage:', err);
+      }
       return newMode;
     });
   };
@@ -57,3 +61,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     </ThemeContext.Provider>
   );
 };
+
+// Export the context in case you need to use it directly (optional)
+export { ThemeContext };
